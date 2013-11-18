@@ -4,7 +4,7 @@ A XBMC plugin that post all xbmc events to a rabbitmq instance
 
 Installation
 --------
-Just put the folder script.jcsd.mpd.pauser in .xbmc/addons
+Just put the folder script.jcsd.clu.xbmc in .xbmc/addons
 
 Configuration
 --------

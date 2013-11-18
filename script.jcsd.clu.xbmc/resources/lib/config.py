@@ -3,7 +3,7 @@
 class Config:
     def load(self, addon, rmqconfig):
         rmqconfig.host = addon.getSetting('host')    
-        rmqconfig.port = addon.getSetting('port')
+        rmqconfig.port = int(addon.getSetting('port'))
         rmqconfig.user = addon.getSetting('user')
         rmqconfig.password = addon.getSetting('password')
 

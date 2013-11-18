@@ -32,13 +32,15 @@ class NotificationService(threading.Thread):
 
   def _forward(self, notification):
     ''' Fowards the notification recieved to a function on the scrobbler '''
+    xbmc.log(msg='[%s] Forwarding notification'%(TAG))
     try:
-      self.handler.handle(notification)
+      self._handler.handle(notification)
     except Exception , e :
-      xbmc.log(msg='[%s] Error whith handler : %s' % (e), level=xbmc.LOGERROR)
+      xbmc.log(msg='[%s] Error whith handler : %s' % (TAG, e.message), level=xbmc.LOGERROR)
 
   def _readNotification(self, telnet):
     ''' Read a notification from the telnet connection, blocks until the data is available, or else raises an EOFError if the connection is lost '''
+    xbmc.log(msg='[%s] Reading notification'%(TAG))
     while not (self._abortRequested or xbmc.abortRequested):
       try:
         addbuffer = telnet.read_some()
@@ -78,17 +80,19 @@ class NotificationService(threading.Thread):
           xbmc.log('[%s]  Could not establish connection after %i attemps. Shutdown' % (TAG, tried), level=xbmc.LOGFATAL)
           break
         xbmc.log(msg='[%s] Telnet service created'%(TAG))
-        while not (self._abortRequested or xbmc.abortRequested):
-          try:
-            data = self._readNotification(telnet)
-            self._forward(data)
-          except EOFError:
-            telnet = telnetlib.Telnet(self.TELNET_ADDRESS, self.TELNET_PORT)
-            self._notificationBuffer = ''
-            continue
-          except Exception, e:
-            xbmc.log(msg=e, level=xbmc.LOGSEVERE)
-            break
+      while not (self._abortRequested or xbmc.abortRequested):
+        try:
+          data = self._readNotification(telnet)
+          xbmc.log(msg='[%s] Data read'%(TAG))
+          self._forward(data)
+        except EOFError:
+          telnet = telnetlib.Telnet(self.TELNET_ADDRESS, self.TELNET_PORT)
+          self._notificationBuffer = ''
+          xbmc.log(msg='[%s] EOFError'%(TAG))
+          continue
+        except Exception, e:
+          xbmc.log(msg=e.message, level=xbmc.LOGSEVERE)
+          break
     if telnet is not None:
       telnet.close()
     xbmc.log(msg='[%s] Notification service stopped'%(TAG))

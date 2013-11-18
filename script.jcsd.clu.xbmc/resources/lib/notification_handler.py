@@ -26,31 +26,35 @@ class NotificationHandler(object):
     self._channel = None
 
   def loadconfig(self):
-    self._config.load(self._addon, self._mpdconfig)
+    xbmc.log(msg="[%s] Obtaining config"%(TAG)) 
+    self._config.load(self._addon, self._rmqconfig)
 
   def handle(self, objmessage):
     xbmc.log(msg="[%s] Handling message"%(TAG)) 
     xbmc.log(msg="[%s] Initialising message channel"%(TAG)) 
+    self.loadconfig()
+
     try:
       self.initconnection()
       try:
         self.publish(objmessage)
+        xbmc.log(msg="[%s] Success : Message posted"%(TAG))
       except Exception, ex2:
-        xbmc.log(msg="[%s] Error : %s"%(TAG, ex2))
+        xbmc.log(msg="[%s] Error : %s"%(TAG, ex2), level=xbmc.LOGERROR)
       self.disconnect()
     except Exception, ex:
-      xbmc.log(msg="[%s] Error : %s"%(TAG, ex))
+      xbmc.log(msg="[%s] Error : %s"%(TAG, ex), level=xbmc.LOGERROR)
 
   def initconnection(self):
-    cred=pika.PlainCredentials(self._config.user, self._config.password)
-    params= pika.ConnectionParameters(host=self._config.host, port=self._config.port, credentials=cred)
+    cred=pika.PlainCredentials(self._rmqconfig.user, self._rmqconfig.password)
+    params= pika.ConnectionParameters(host=self._rmqconfig.host, port=self._rmqconfig.port, credentials=cred)
     self._connection = pika.BlockingConnection(params)
-    self._channel = self.connection.channel()
+    self._channel = self._connection.channel()
 
   def publish(self, objmessage):
     message=json.dumps(objmessage)
-    channel = self.rmqchannel()
-    channel.basic_publish(exchange=self._config.exchange, routing_key=self._config.routing_key, body=message)
+    channel = self._connection.channel()
+    channel.basic_publish(exchange=self._rmqconfig.exchange, routing_key=self._rmqconfig.routing_key, body=message)
 
   def disconnect(self):
-    self._connection.disconnect()
+    self._connection.close()

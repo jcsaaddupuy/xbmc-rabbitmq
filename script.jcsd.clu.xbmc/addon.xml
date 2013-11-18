@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.jcsd.clu.xbmc"
+  name="Clu XBMC"
+  version="0.0.1"
+  provider-name="jcsd">
+  <requires>
+    <import addon="xbmc.python" version="2.0"/>
+  </requires>
+  <extension point="xbmc.service"
+    library="default.py" name="script.jcsd.clu.xbmc.default"></extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary lang="en">Forward XBMC state to a rabbtmq instance</summary>
+  </extension>
+</addon>

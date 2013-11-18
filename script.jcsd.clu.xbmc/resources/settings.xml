@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="32000">
+        <setting label="32001" type="text"   id="host" default="localhost"/>
+        <setting label="32002" type="number" id="port" default="5672"/>
+        <setting label="32003" type="text"   id="user" default="guest"/>
+        <setting label="32004" type="text"   id="password" option="hidden" default="guest"/>
+    </category>
+    
+    <category label="32010">
+        <setting label="32011" type="text"   id="exchange"  default="home.events"/>
+        <setting label="32012" type="text"   id="type"  default="topic"/>
+        <setting label="32013" type="text"   id="routing_key"  default="home.events.multimedia.xbmc"/>
+    </category>
+   
+</settings>
